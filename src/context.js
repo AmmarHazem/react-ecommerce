@@ -18,19 +18,64 @@ class ProductProvider extends React.Component{
     }
 
     clearCart = () => {
-        console.log('clear cart')
+        this.setState(prevState => {
+            prevState.cart.forEach(p => p.inCart = false)
+            return {
+                cart : [],
+                products : prevState.products,
+            }
+        })
     }
 
     removeItem = id => {
-        console.log('remove item: ', id)
+        this.setState(prevState => {
+            return {
+                cart : prevState.cart.filter(p => {
+                    if(p.id !== id){
+                        return p
+                    }
+                    else
+                    {
+                        p.inCart = false
+                    }
+                }),
+                products : prevState.products,
+            }
+        })
     }
 
     decrement = id => {
-        console.log('decrement: ', id)
+        let products = this.state.products
+        products.forEach(p => {
+            if(p.id === id && p.count > 1){
+                p.count -= 1
+            }
+        })
+        this.setState({products : products})
     }
 
     increment = id => {
-        console.log('increment: ', id)
+        this.setState(prevState => {
+            return {
+                cart : prevState.cart.map(p => {
+                    if(p.id === id){
+                        p.count += 1
+                    }
+                    return p
+                })
+            }
+        })
+    }
+
+    changeCount = (e, id) =>{
+        let count = e.target.value
+        let products = this.state.products
+        products.forEach(p => {
+            if(p.id === id){
+                p.count = count
+            }
+        })
+        this.setState({products : products})
     }
 
     openModal = id => {
@@ -56,7 +101,7 @@ class ProductProvider extends React.Component{
         this.setProducts()
     }
 
-    handleDetail = (id) => {
+    handleDetail = id => {
         let p = this.getItem(id)
         this.setState({detailProduct : p})
     }
@@ -65,7 +110,7 @@ class ProductProvider extends React.Component{
         return this.state.products.find(p => p.id === id)
     }
 
-    addToCart = (id) => {
+    addToCart = id => {
         let tempProducts = [...this.state.products]
         let p = tempProducts.find(p => p.id === id)
         p.inCart = true
@@ -87,6 +132,7 @@ class ProductProvider extends React.Component{
             decrement : this.decrement,
             removeItem : this.removeItem,
             clearCart : this.clearCart,
+            changeCount : this.changeCount,
         }
         return (
             <context.Provider value={cxt}>
