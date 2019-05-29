@@ -5,6 +5,7 @@ import Title from '../Title'
 import EmptyCart from './EmptyCart'
 import CartRow from './CartRow';
 import {StyledButton} from '../StyledButton'
+import PaypalButton from './PaypalButton'
 
 
 export default class Cart extends Component {
@@ -20,6 +21,7 @@ export default class Cart extends Component {
             <section>
                 <ProductConsumer>
                         {cxt => {
+                            let total = this.getTotal(cxt.cart)
                             if (cxt.cart.length > 0){
                                 return (
                                     <React.Fragment>
@@ -43,8 +45,17 @@ export default class Cart extends Component {
                                                     <td colSpan="5" className="text-right">Total</td>
                                                     <td className="text-right">
                                                         <span className="mr-4">
-                                                            {this.getTotal(cxt.cart)}
+                                                            {total}
                                                         </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colSpan="6">
+                                                        <PaypalButton
+                                                        history={this.props.history}
+                                                        total={total}
+                                                        clearCart={cxt.clearCart}
+                                                        />
                                                     </td>
                                                 </tr>
                                             </tbody>
